@@ -1,7 +1,7 @@
 ---
-title: "Affordability and Achievement in Massachusetts"
+title: "Learning Loss in Massachusetts During Covid"
 author: "Ben Schwartz"
-description: "City level affordable housing construction in MA compared to MCAS scores"
+description: "A look at MCAS scores over time from before and after the school shutdowns during the COVID-19 pandemic"
 output:
   distill::distill_article:
     self_contained: false
@@ -11,7 +11,7 @@ output:
 
 ## Project thoughts
 
-As the Boston metropolitan area undergoes an affordable housing crisis, the state has pushed municipalities to increase their supply of affordable units. Concurrently, while Massachusetts has some of the best performing public schools in the country, there is a large difference in achievement between schools in wealthier towns and those with fewer resources. I am interested in investigating the relationship between the availability of affordable housing in a town and the quality of its public schools (as measured by MCAS scores) to see whether the cities with the greatest educational opportunities are increasing their accessibility to those who are less well off.
+There has been broad conjecture on whether or not school closures during the Covid-19 pandemic led to learning loss among students forced to go to school on their computers instead of in the classroom. The state of Massachusetts offers a good opportunity to see whether that was the case. The state administers standardized tests called MCAS each year to all public schools in the state to measure proficiency in subjects such as biology and physics. The results of these tests are made public and scores of students are categorized by school and by level of achievement on the exam. Massachusetts skipped administering the tests during 2020 due to school closures and the ongoing pandemic, but there is data available from 2021 after students returned to the classroom. My hypothesis is that the proficiency of students on their MCAS tests in biology and physics has decreased significantly post-pandemic as compared to past years. To that end, I plan on comparing the MCAS scores on those tests from the years of 2021 (post-school closures) to 2019 (before any closures). My explanatory variables are the  proportion of students who scored at "proficient" or above at each school and overall and the year during which the test took place. The outcome variable is the estimated learning loss which I will measure based on the changes within schools and across the state as a whole from 2019 to 2021.
 
 
 
