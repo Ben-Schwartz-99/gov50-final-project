@@ -13,6 +13,20 @@ output:
 
 There has been broad conjecture on whether or not school closures during the Covid-19 pandemic led to learning loss among students forced to go to school on their computers instead of in the classroom. The state of Massachusetts offers a good opportunity to see whether that was the case. The state administers standardized tests called MCAS each year to all public schools in the state to measure proficiency in subjects such as biology and physics. The results of these tests are made public and scores of students are categorized by school and by level of achievement on the exam. Massachusetts skipped administering the tests during 2020 due to school closures and the ongoing pandemic, but there is data available from 2021 after students returned to the classroom. My hypothesis is that the proficiency of students on their MCAS tests in biology and physics has decreased significantly post-pandemic as compared to past years. To that end, I plan on comparing the MCAS scores on those tests from the years of 2021 (post-school closures) to 2019 (before any closures). My explanatory variables are the  proportion of students who scored at "proficient" or above at each school and overall and the year during which the test took place. The outcome variable is the estimated learning loss which I will measure based on the changes within schools and across the state as a whole from 2019 to 2021.
 
+```{r}
+library(tidyverse)
+library(infer)
+mcas <- read.csv("mcas.csv")
+
+plot_1 <- mcas |>
+  group_by(year, Subject) |>
+  summarize(failure_rate = 100*sum(number_failing)/sum(total_students)) |>
+  ggplot(aes(x = year, y = failure_rate, fill = Subject)) +
+  geom_col(position = "dodge") +
+  labs(title = "Science MCAS Failures Before and After Shutdowns", x = "Time", y = "Failure Rate (percent)") +
+  theme_minimal()
+plot_1
+```
 
 
 
