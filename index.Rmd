@@ -16,6 +16,9 @@ There has been broad conjecture on whether or not school closures during the Cov
 ```{r}
 library(tidyverse)
 library(infer)
+library(broom)
+library(knitr)
+
 mcas <- read.csv("mcas.csv")
 
 plot_1 <- mcas |>
@@ -26,7 +29,18 @@ plot_1 <- mcas |>
   labs(title = "Science MCAS Failures Before and After Shutdowns", x = "Time", y = "Failure Rate (percent)") +
   theme_minimal()
 plot_1
+
+phys <- mcas |>
+  filter(Subject == "Physics")
+
+fit_1 <- lm(percent_failure ~ year, data = phys) |>
+  tidy() |>
+  kable(caption = "Coefficient Estimates for a Model Fitted to Estimate Variation in Failure Rate on Physics MCAS",
+        col.names = c("Predictor", "Estimate", "SE", "Statistic", "P Value"),
+        digits = 3)
+fit_1
 ```
+The year of shutdowns resulted in approximately a 6.4% increase in the failure rate on the physics MCAS exam and the effect is highly statistically significant, however I should add more years of data to isolate the effect of the shutdowns vs. past variations in failure rate year to year.
 
 
 
