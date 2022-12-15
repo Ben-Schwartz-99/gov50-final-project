@@ -42,6 +42,9 @@ plot_1
 
 ## Results
 
+
+
+
 The following chart presents the proportion of students across all grades 3rd through 8th who did not meet expectations in each year, broken up between English and Math, which are measured separately for each grade level.
 ```{r}
 plot_2 <- mcas |>
@@ -63,6 +66,9 @@ plot_2
 ```
 
 Broken up by subject, there was a 5% increase in the failure rate on the MCAS English exam from 2019 to 2021 and a 10% increase in the failure rate on the Math exam. There was no difference in the failure rate on the exams from 2018 to 2019.
+
+
+
 
 Below is a regression run on across all exams with the explanatory variable being whether or not the exam took place before or after school shutdowns and the dependent variable as the failure rate. For the purposes of the regression, tests from 2018 and 2019 have been grouped together as both years were before any shutdowns from the pandemic.
 ```{r}

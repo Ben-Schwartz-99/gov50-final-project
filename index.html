@@ -115,7 +115,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/figure-html5/unnamed-chunk-1-1.png","index_files/figure-html5/unnamed-chunk-2-1.png","index_files/header-attrs-2.16/header-attrs.js","index_files/header-attrs-2.17/header-attrs.js","index_files/header-attrs-2.18/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js","mcas.csv"]}
+  {"type":"character","attributes":{},"value":["index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/figure-html5/unnamed-chunk-1-1.png","index_files/figure-html5/unnamed-chunk-2-1.png","index_files/figure-html5/unnamed-chunk-4-1.png","index_files/header-attrs-2.16/header-attrs.js","index_files/header-attrs-2.17/header-attrs.js","index_files/header-attrs-2.18/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js","mcas.csv"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
   <!--/radix_placeholder_navigation_in_header-->
@@ -1523,69 +1523,18 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <p>To that end, I plan on comparing the failure rate on those tests from the years of 2021 (post-school closures) to 2019 and 2018 (before any closures). I included two years before the pandemic to demonstrate what year to year variation existed previously and to better contextualize data from 2021. My explanatory variable is the year in which the test was administered and whether it was before or after school closure during the COVID-19 pandemic. The outcome variable is the proportion of students who did not receive a passing grade which the state marks as “meeting expectation” or above in each subject. The state has four levels of achievement, from Not Meeting Expectations to Exceeding Expectations, although for the purposes of this project, results will be divided into a binary for those who are performing at grade level and those who are not. This project is an example of a natural experiment with a before and after design. Although the students changed grades between test years, the level of rigor of the MCAS test is supposed to be constant across years, providing insight into the academic preparedness of Massachusetts students before and after school shutdowns.</p>
 <p>All data is from the Massachusetts Department of Education and can be found using the link below:
 <a href="https://profiles.doe.mass.edu/mcas/achievement_level.aspx?orgcode=00000000&amp;orgtypecode=0" class="uri">https://profiles.doe.mass.edu/mcas/achievement_level.aspx?orgcode=00000000&amp;orgtypecode=0</a></p>
-The chart below lays illustrates the average MCAS scores across all grade levels in English and Math in the years 2018, 2019, and 2021. There is a noticeable drop in scores in 2021, which helped prompt this investigation.
+<p>The chart below lays illustrates the average MCAS scores across all grade levels in English and Math in the years 2018, 2019, and 2021. There is a noticeable drop in scores in 2021, which helped prompt this investigation.</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://tidyverse.tidyverse.org'>tidyverse</a></span><span class='op'>)</span></span>
-<span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/tidymodels/infer'>infer</a></span><span class='op'>)</span></span>
-<span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://broom.tidymodels.org/'>broom</a></span><span class='op'>)</span></span>
-<span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://yihui.org/knitr/'>knitr</a></span><span class='op'>)</span></span>
-<span></span>
-<span><span class='va'>mcas</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/utils/read.table.html'>read.csv</a></span><span class='op'>(</span><span class='st'>"mcas.csv"</span><span class='op'>)</span></span>
-<span></span>
-<span><span class='va'>plot_1</span> <span class='op'>&lt;-</span> <span class='va'>mcas</span> <span class='op'>|&gt;</span></span>
-<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></span><span class='op'>(</span><span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>year</span>, y <span class='op'>=</span> <span class='va'>avg_score</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span></span>
-<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_point.html'>geom_point</a></span><span class='op'>(</span>alpha <span class='op'>=</span> <span class='fl'>0.7</span>, </span>
-<span>             color <span class='op'>=</span> <span class='st'>"cornflowerblue"</span><span class='op'>)</span> <span class='op'>+</span></span>
-<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/labs.html'>labs</a></span><span class='op'>(</span>title <span class='op'>=</span> <span class='st'>"Average Test Scores Across Subjects by Year"</span>, </span>
-<span>       x <span class='op'>=</span> <span class='st'>"Year"</span>, </span>
-<span>       y <span class='op'>=</span> <span class='st'>"Average Score (out of 560)"</span> <span class='op'>)</span> <span class='op'>+</span></span>
-<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggtheme.html'>theme_minimal</a></span><span class='op'>(</span><span class='op'>)</span></span>
-<span><span class='va'>plot_1</span></span></code></pre>
-</div>
 <p><img src="index_files/figure-html5/unnamed-chunk-1-1.png" width="624" /></p>
 </div>
 <h2 id="results">Results</h2>
-The following chart presents the proportion of students across all grades 3rd through 8th who did not meet expectations in each year, broken up between English and Math, which are measured separately for each grade level.
+<p>The following chart presents the proportion of students across all grades 3rd through 8th who did not meet expectations in each year, broken up between English and Math, which are measured separately for each grade level.</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>plot_2</span> <span class='op'>&lt;-</span> <span class='va'>mcas</span> <span class='op'>|&gt;</span></span>
-<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>subject</span> <span class='op'>==</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"all_eng"</span>, <span class='st'>"all_math"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
-<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span></span>
-<span>    Subject <span class='op'>=</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/case_when.html'>case_when</a></span><span class='op'>(</span></span>
-<span>      <span class='va'>subject</span> <span class='op'>==</span> <span class='st'>"all_eng"</span> <span class='op'>~</span> <span class='st'>"3rd - 8th Grade English"</span>,</span>
-<span>      <span class='va'>subject</span> <span class='op'>==</span> <span class='st'>"all_math"</span> <span class='op'>~</span> <span class='st'>"3rd - 8th Grade Math"</span></span>
-<span>    <span class='op'>)</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
-<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></span><span class='op'>(</span><span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>year</span>, </span>
-<span>             y <span class='op'>=</span> <span class='va'>percent_fail</span>, </span>
-<span>             fill <span class='op'>=</span> <span class='va'>Subject</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span></span>
-<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_bar.html'>geom_col</a></span><span class='op'>(</span>position <span class='op'>=</span> <span class='st'>"dodge"</span><span class='op'>)</span> <span class='op'>+</span></span>
-<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/labs.html'>labs</a></span><span class='op'>(</span>title <span class='op'>=</span> <span class='st'>"MCAS Failures Before and After School Shutdowns"</span>, </span>
-<span>       x <span class='op'>=</span> <span class='st'>"Year"</span>, </span>
-<span>       y <span class='op'>=</span> <span class='st'>"Percent Below `Meets Expectations`"</span> <span class='op'>)</span> <span class='op'>+</span></span>
-<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggtheme.html'>theme_minimal</a></span><span class='op'>(</span><span class='op'>)</span></span>
-<span><span class='va'>plot_2</span></span></code></pre>
-</div>
 <p><img src="index_files/figure-html5/unnamed-chunk-2-1.png" width="624" /></p>
 </div>
 <p>Broken up by subject, there was a 5% increase in the failure rate on the MCAS English exam from 2019 to 2021 and a 10% increase in the failure rate on the Math exam. There was no difference in the failure rate on the exams from 2018 to 2019.</p>
-Below is a regression run on across all exams with the explanatory variable being whether or not the exam took place before or after school shutdowns and the dependent variable as the failure rate. For the purposes of the regression, tests from 2018 and 2019 have been grouped together as both years were before any shutdowns from the pandemic.
+<p>Below is a regression run on across all exams with the explanatory variable being whether or not the exam took place before or after school shutdowns and the dependent variable as the failure rate. For the purposes of the regression, tests from 2018 and 2019 have been grouped together as both years were before any shutdowns from the pandemic.</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>fit_data</span> <span class='op'>&lt;-</span> <span class='va'>mcas</span> <span class='op'>|&gt;</span></span>
-<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span></span>
-<span>    pandemic <span class='op'>=</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/if_else.html'>if_else</a></span><span class='op'>(</span></span>
-<span>      <span class='va'>year</span> <span class='op'>==</span> <span class='fl'>2021</span>, <span class='st'>"Post-Shutdowns"</span>,</span>
-<span>      <span class='st'>"Pre-Shutdowns"</span></span>
-<span>    <span class='op'>)</span><span class='op'>)</span></span>
-<span>  </span>
-<span><span class='va'>fit_1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span><span class='op'>(</span><span class='va'>percent_fail</span> <span class='op'>~</span> <span class='va'>pandemic</span>, data <span class='op'>=</span> <span class='va'>fit_data</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
-<span>  <span class='fu'><a href='https://generics.r-lib.org/reference/tidy.html'>tidy</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
-<span>  <span class='fu'><a href='https://rdrr.io/pkg/knitr/man/kable.html'>kable</a></span><span class='op'>(</span>caption <span class='op'>=</span> <span class='st'>"Coefficient Estimates for a Model Fitted to Estimate Variation in Failure Rate on Math and English MCAS"</span>,</span>
-<span>        col.names <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Predictor"</span>, <span class='st'>"Estimate"</span>, <span class='st'>"SE"</span>, <span class='st'>"Statistic"</span>, <span class='st'>"P Value"</span><span class='op'>)</span>,</span>
-<span>        digits <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span></span>
-<span><span class='va'>fit_1</span></span></code></pre>
-</div>
 <table>
 <caption><span id="tab:unnamed-chunk-3">Table 1: </span>Coefficient Estimates for a Model Fitted to Estimate Variation in Failure Rate on Math and English MCAS</caption>
 <thead>
