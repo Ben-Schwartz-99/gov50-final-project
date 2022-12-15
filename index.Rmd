@@ -9,10 +9,18 @@ output:
 
 
 
-## Project thoughts
+## Introduction
 
-There has been broad conjecture on whether or not school closures during the Covid-19 pandemic led to learning loss among students forced to go to school on their computers instead of in the classroom. The state of Massachusetts offers a good opportunity to see whether that was the case. The state administers standardized tests called MCAS each year to all public schools in the state to measure proficiency in subjects such as biology and physics. The results of these tests are made public and scores of students are categorized by school and by level of achievement on the exam. Massachusetts skipped administering the tests during 2020 due to school closures and the ongoing pandemic, but there is data available from 2021 after students returned to the classroom. My hypothesis is that the proficiency of students on their MCAS tests in biology and physics has decreased significantly post-pandemic as compared to past years. To that end, I plan on comparing the MCAS scores on those tests from the years of 2021 (post-school closures) to 2019 (before any closures). My explanatory variables are the  proportion of students who scored at "proficient" or above at each school and overall and the year during which the test took place. The outcome variable is the estimated learning loss which I will measure based on the changes within schools and across the state as a whole from 2019 to 2021.
+There has been broad conjecture on whether or not school closures during the COVID-19 pandemic led to learning loss among students forced to go to school on their computers instead of in the classroom. The state of Massachusetts offers a good opportunity to see whether that was the case. The state administers standardized tests called MCAS each year to all public schools in the commonwealth to measure proficiency in subjects such as Math and English. The results of these tests are made public and the scores of students are categorized by subject and by their level of achievement on the exam. Massachusetts did not administer the tests in 2020 due to school closures and the ongoing pandemic, but there is data available from 2021 after students returned to the classroom. My hypothesis is that the proficiency of students from 3rd through 8th grade as measured by their MCAS exams in English in Math has seen a statistically significant decrease post-pandemic as compared to past years. The results of analysis such as this are vital to help lawmakers and school officials better understand the pros and cons of shutting down schools the next time there is call for concern.
 
+## Data
+
+To that end, I plan on comparing the failure rate on those tests from the years of 2021 (post-school closures) to 2019 and 2018 (before any closures). I included two years before the pandemic to demonstrate what year to year variation existed previously and to better contextualize data from 2021. My explanatory variable is the year in which the test was administered and whether it was before or after school closure during the COVID-19 pandemic. The outcome variable is the proportion of students who did not receive a passing grade which the state marks as "meeting expectation" or above in each subject. The state has four levels of achievement, from Not Meeting Expectations to Exceeding Expectations, although for the purposes of this project, results will be divided into a binary for those who are performing at grade level and those who are not. This project is an example of a natural experiment with a before and after design. Although the students changed grades between test years, the level of rigor of the MCAS test is supposed to be constant across years, providing insight into the academic preparedness of Massachusetts students before and after school shutdowns.
+
+All data is from the Massachusetts Department of Education and can be found using the link below:
+https://profiles.doe.mass.edu/mcas/achievement_level.aspx?orgcode=00000000&orgtypecode=0
+
+The chart below lays illustrates the average MCAS scores across all grade levels in English and Math in the years 2018, 2019, and 2021. There is a noticeable drop in scores in 2021, which helped prompt this investigation.
 ```{r}
 library(tidyverse)
 library(infer)
@@ -22,25 +30,58 @@ library(knitr)
 mcas <- read.csv("mcas.csv")
 
 plot_1 <- mcas |>
-  group_by(year, Subject) |>
-  summarize(failure_rate = 100*sum(number_failing)/sum(total_students)) |>
-  ggplot(aes(x = year, y = failure_rate, fill = Subject)) +
-  geom_col(position = "dodge") +
-  labs(title = "Science MCAS Failures Before and After Shutdowns", x = "Time", y = "Failure Rate (percent)") +
+  ggplot(aes(x = year, y = avg_score)) +
+  geom_point(alpha = 0.7, 
+             color = "cornflowerblue") +
+  labs(title = "Average Test Scores Across Subjects by Year", 
+       x = "Year", 
+       y = "Average Score (out of 560)" ) +
   theme_minimal()
 plot_1
+```
 
-phys <- mcas |>
-  filter(Subject == "Physics")
+## Results
 
-fit_1 <- lm(percent_failure ~ year, data = phys) |>
+The following chart presents the proportion of students across all grades 3rd through 8th who did not meet expectations in each year, broken up between English and Math, which are measured separately for each grade level.
+```{r}
+plot_2 <- mcas |>
+  filter(subject == c("all_eng", "all_math")) |>
+  mutate(
+    Subject = case_when(
+      subject == "all_eng" ~ "3rd - 8th Grade English",
+      subject == "all_math" ~ "3rd - 8th Grade Math"
+    )) |>
+  ggplot(aes(x = year, 
+             y = percent_fail, 
+             fill = Subject)) +
+  geom_col(position = "dodge") +
+  labs(title = "MCAS Failures Before and After School Shutdowns", 
+       x = "Year", 
+       y = "Percent Below `Meets Expectations`" ) +
+  theme_minimal()
+plot_2
+```
+
+Broken up by subject, there was a 5% increase in the failure rate on the MCAS English exam from 2019 to 2021 and a 10% increase in the failure rate on the Math exam. There was no difference in the failure rate on the exams from 2018 to 2019.
+
+Below is a regression run on across all exams with the explanatory variable being whether or not the exam took place before or after school shutdowns and the dependent variable as the failure rate. For the purposes of the regression, tests from 2018 and 2019 have been grouped together as both years were before any shutdowns from the pandemic.
+```{r}
+fit_data <- mcas |>
+  mutate(
+    pandemic = if_else(
+      year == 2021, "Post-Shutdowns",
+      "Pre-Shutdowns"
+    ))
+  
+fit_1 <- lm(percent_fail ~ pandemic, data = fit_data) |>
   tidy() |>
-  kable(caption = "Coefficient Estimates for a Model Fitted to Estimate Variation in Failure Rate on Physics MCAS",
+  kable(caption = "Coefficient Estimates for a Model Fitted to Estimate Variation in Failure Rate on Math and English MCAS",
         col.names = c("Predictor", "Estimate", "SE", "Statistic", "P Value"),
         digits = 3)
 fit_1
 ```
-The year of shutdowns resulted in approximately a 6.4% increase in the failure rate on the physics MCAS exam and the effect is highly statistically significant, however I should add more years of data to isolate the effect of the shutdowns vs. past variations in failure rate year to year.
+The regression demonstrates that MCAS scores from after the school shutdowns are associate with a 7.5% increase in the failure rate as compare to those from the two years before the shutdowns. The p value for the regression is almost 0, indicating this relationship is statistically significant.
 
+## Conclusion
 
-
+The investigation into MCAS scores before and after school shutdowns reveals a troubling increase in the percentage of students who are performing below their grade level in English and Math post-shutdown. These findings are in support of the hypothesis that school shutdowns have negatively affected students' education. There are limitations to inference, however, as the students have changed grades between years so they are not necessarily being compared to themselves in this analysis. Additionally, breaking down results by school district would be useful as well as not every school was able to submit MCAS results every year, which could bias results if under-performing or over-performing schools were left out of the data in certain years. That being said, there is clear evidence that school shutdowns negatively affected students' learning, and they should be treated as a last resort the next time there is a crisis.
