@@ -21,7 +21,10 @@ All data is from the Massachusetts Department of Education and can be found usin
 https://profiles.doe.mass.edu/mcas/achievement_level.aspx?orgcode=00000000&orgtypecode=0
 
 The chart below lays illustrates the average MCAS scores across all grade levels in English and Math in the years 2018, 2019, and 2021. There is a noticeable drop in scores in 2021, which helped prompt this investigation.
-```{r}
+
+
+
+```{r, echo = FALSE}
 library(tidyverse)
 library(infer)
 library(broom)
@@ -42,11 +45,11 @@ plot_1
 
 ## Results
 
-
-
-
 The following chart presents the proportion of students across all grades 3rd through 8th who did not meet expectations in each year, broken up between English and Math, which are measured separately for each grade level.
-```{r}
+
+
+
+```{r, echo = FALSE}
 plot_2 <- mcas |>
   filter(subject == c("all_eng", "all_math")) |>
   mutate(
@@ -67,11 +70,11 @@ plot_2
 
 Broken up by subject, there was a 5% increase in the failure rate on the MCAS English exam from 2019 to 2021 and a 10% increase in the failure rate on the Math exam. There was no difference in the failure rate on the exams from 2018 to 2019.
 
-
-
-
 Below is a regression run on across all exams with the explanatory variable being whether or not the exam took place before or after school shutdowns and the dependent variable as the failure rate. For the purposes of the regression, tests from 2018 and 2019 have been grouped together as both years were before any shutdowns from the pandemic.
-```{r}
+
+
+
+```{r, echo = FALSE}
 fit_data <- mcas |>
   mutate(
     pandemic = if_else(
@@ -86,6 +89,9 @@ fit_1 <- lm(percent_fail ~ pandemic, data = fit_data) |>
         digits = 3)
 fit_1
 ```
+
+
+
 The regression demonstrates that MCAS scores from after the school shutdowns are associate with a 7.5% increase in the failure rate as compare to those from the two years before the shutdowns. The p value for the regression is almost 0, indicating this relationship is statistically significant.
 
 ## Conclusion
